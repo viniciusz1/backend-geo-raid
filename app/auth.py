@@ -3,6 +3,7 @@ import jwt
 
 from functools import wraps
 from flask import request, jsonify, Blueprint, current_app
+from app.models import Usuario
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -12,7 +13,10 @@ def login():
     username = auth_data.get('username')
     password = auth_data.get('password')
 
-    if username == "admin" and password == "password":
+    
+    user = Usuario.query.filter_by(username=username).first()
+
+    if user.password == password:
         token = jwt.encode({
             'user': username,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)

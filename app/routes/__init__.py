@@ -5,4 +5,4 @@ from flask import Blueprint
 bp = Blueprint('main', __name__)
 
 #import e encapsula as rotas no init usando o blueprint
-from app.routes import clients
+from app.routes import users

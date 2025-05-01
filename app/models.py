@@ -1,13 +1,25 @@
 from app import db
 
-class Client(db.Model):
+class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, index=True)
-    email = db.Column(db.String(100), unique=True, index=True)
+    username = db.Column(db.String(100), unique=True, index=True)
+    password = db.Column(db.String(100), unique=True, index=True)
 
     def to_dict(self):
         return {
             'id': self.id,
-            'name': self.name,
-            'email': self.email
+            'username': self.username,
+            'password': self.password
+        }
+    
+class Personagem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), unique=True, index=True)
+    skin = db.Column(db.String(100), unique=True, index=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'skin': self.skin
         }
