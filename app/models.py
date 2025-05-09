@@ -52,3 +52,4 @@ class Quest(db.Model):
             'questao': self.questao,
             'dificuldade': self.dificuldade
         }
+    

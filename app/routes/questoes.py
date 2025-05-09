@@ -158,3 +158,4 @@ def populate_initial_quests(current_user):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Erro ao popular questões iniciais", "details": str(e)}), 500
+    
