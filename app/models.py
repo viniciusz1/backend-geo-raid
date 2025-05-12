@@ -38,3 +38,27 @@ class Character(db.Model):
             'name': self.name,
             'skin': self.skin
         }
+
+class Fase(db.Model):
+    __tablename__ = 'fase'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    sequencia = db.Column(db.Integer, nullable=False, unique=True)
+
+    def __repr__(self):
+        return f"<Fase {self.nome} (Sequência {self.sequencia})>"
+
+class FaseAtual(db.Model):
+    __tablename__ = 'fase_atual'
+
+    id = db.Column(db.Integer, primary_key=True)
+    fase_id = db.Column(db.Integer, db.ForeignKey('fase.id'), nullable=False)
+    horario_inicio_fase = db.Column(db.DateTime, nullable=True)
+    horario_final_fase = db.Column(db.DateTime, nullable=True)
+    passou_fase = db.Column(db.Boolean, default=False)
+
+    fase = db.relationship('Fase')
+
+    def __repr__(self):
+        return f"<FaseAtual (Fase ID {self.fase_id})>"

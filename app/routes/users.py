@@ -4,7 +4,6 @@ from app.models import Character, Usuario
 from app.routes import bp
 from app.auth import token_required
 
-
 @bp.route("/users", methods=["GET"])
 @token_required
 def get_users(current_user):
