@@ -62,3 +62,12 @@ class FaseAtual(db.Model):
 
     def __repr__(self):
         return f"<FaseAtual (Fase ID {self.fase_id})>"
+    
+class Ranking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False) 
+    pontos = db.Column(db.Integer, nullable=False)
+    tempo_total = db.Column(db.Float, nullable=False)
+    usuario = db.relationship('Usuario', backref='ranking', lazy=True) 
+    def __repr__(self):
+        return f'<Ranking {self.usuario.username} - {self.pontos} pontos>'

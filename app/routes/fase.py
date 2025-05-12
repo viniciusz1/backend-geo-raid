@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from app import db
 from app.models import Fase, FaseAtual
 from datetime import datetime
+from app.routes.ranking import calcular_pontuacao
 
 bp = Blueprint('fases', __name__, url_prefix='/fase')
 
@@ -40,5 +41,7 @@ def finalizar_fase(fase_atual_id):
     fase_atual.passou_fase = True
 
     db.session.commit()
+    
+    calcular_pontuacao(fase_atual.usuario_id)
 
     return jsonify({'mensagem': f'Fase {fase_atual.fase.nome} finalizada com sucesso'}), 200
