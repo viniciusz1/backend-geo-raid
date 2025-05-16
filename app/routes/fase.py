@@ -6,42 +6,67 @@ from app.routes.ranking import calcular_pontuacao
 
 bp = Blueprint('fases', __name__, url_prefix='/fase')
 
-@bp.route('/iniciar', methods=['POST'])
-def iniciar_fase():
-    ultima_fase_atual = FaseAtual.query.order_by(FaseAtual.id.desc()).first()
-    
-    if ultima_fase_atual:
-        ultima_sequencia = ultima_fase_atual.fase.sequencia
-    else:
-        ultima_sequencia = 0
+# Adicionar após os endpoints existentes no Blueprint bp (fases)
 
-    proxima_fase = Fase.query.filter(Fase.sequencia > ultima_sequencia).order_by(Fase.sequencia).first()
+@bp.route('/', methods=['POST'])
+def criar_fase():
+    data = request.get_json()
+    nome = data.get('nome')
+    sequencia = data.get('sequencia')
 
-    if not proxima_fase:
-        return jsonify({'erro': 'Nenhuma próxima fase disponível'}), 400
+    if not nome or sequencia is None:
+        return jsonify({'erro': 'Nome e sequência são obrigatórios'}), 400
 
-    nova_fase_atual = FaseAtual(
-        fase_id=proxima_fase.id,
-        horario_inicio_fase=datetime.utcnow()
-    )
-    db.session.add(nova_fase_atual)
+    if Fase.query.filter_by(sequencia=sequencia).first():
+        return jsonify({'erro': 'Já existe uma fase com essa sequência'}), 400
+
+    nova_fase = Fase(nome=nome, sequencia=sequencia)
+    db.session.add(nova_fase)
     db.session.commit()
 
-    return jsonify({'mensagem': f'Fase {proxima_fase.nome} iniciada com sucesso'}), 201
+    return jsonify({'mensagem': f'Fase "{nome}" criada com sucesso'}), 201
 
 
-@bp.route('/finalizar/<int:fase_atual_id>', methods=['POST'])
-def finalizar_fase(fase_atual_id):
-    fase_atual = FaseAtual.query.get(fase_atual_id)
+@bp.route('/<int:fase_id>', methods=['PUT'])
+def editar_fase(fase_id):
+    fase = Fase.query.get(fase_id)
+    if not fase:
+        return jsonify({'erro': 'Fase não encontrada'}), 404
 
-    if not fase_atual:
-        return jsonify({'erro': 'FaseAtual não encontrada'}), 404
+    data = request.get_json()
+    nome = data.get('nome')
+    sequencia = data.get('sequencia')
 
-    fase_atual.horario_final_fase = datetime.utcnow()
-    fase_atual.passou_fase = True
+    if nome:
+        fase.nome = nome
+    if sequencia is not None:
+        if Fase.query.filter(Fase.sequencia == sequencia, Fase.id != fase_id).first():
+            return jsonify({'erro': 'Já existe outra fase com essa sequência'}), 400
+        fase.sequencia = sequencia
 
     db.session.commit()
-    
-    calcular_pontuacao(fase_atual.usuario_id)
+    return jsonify({'mensagem': f'Fase atualizada com sucesso'}), 200
 
-    return jsonify({'mensagem': f'Fase {fase_atual.fase.nome} finalizada com sucesso'}), 200
+@bp.route('/', methods=['GET'])
+def listar_fases():
+    fases = Fase.query.order_by(Fase.sequencia).all()
+
+    lista_fases = [
+        {
+            'id': fase.id,
+            'nome': fase.nome,
+            'sequencia': fase.sequencia
+        }
+        for fase in fases
+    ]
+    return jsonify(lista_fases), 200
+
+@bp.route('/<int:fase_id>', methods=['DELETE'])
+def deletar_fase(fase_id):
+    fase = Fase.query.get(fase_id)
+    if not fase:
+        return jsonify({'erro': 'Fase não encontrada'}), 404
+
+    db.session.delete(fase)
+    db.session.commit()
+    return jsonify({'mensagem': f'Fase "{fase.nome}" deletada com sucesso'}), 200

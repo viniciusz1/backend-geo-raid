@@ -4,7 +4,7 @@ class Usuario(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, index=True)
-    password = db.Column(db.String(100), unique=True, index=True)
+    password = db.Column(db.String(1000), index=True)
 
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=True, unique=True)
     character = db.relationship('Character', back_populates='user', uselist=False)

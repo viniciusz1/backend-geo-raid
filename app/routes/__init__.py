@@ -7,8 +7,10 @@ bp = Blueprint('main', __name__)
 from app.routes import users
 from app.routes import characters
 from app.routes import fase
+from app.routes import fase_atual
 from app.routes import ranking
 
  
 bp.register_blueprint(fase.bp)
 bp.register_blueprint(ranking.bp)
+bp.register_blueprint(fase_atual.bp)

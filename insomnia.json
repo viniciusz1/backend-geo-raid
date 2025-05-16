@@ -1,0 +1,98 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-05-13T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2024.1.0",
+  "resources": [
+    {
+      "_id": "wrk_CharactersAPI",
+      "name": "Personagens",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "name": "Ambiente Base",
+      "parentId": "wrk_CharactersAPI",
+      "data": {
+        "path": "http://localhost:5000",
+        "token": "Bearer SEU_TOKEN_AQUI"
+      }
+    },
+    {
+      "_id": "fld_personagens",
+      "_type": "request_group",
+      "name": "Personagens",
+      "parentId": "wrk_CharactersAPI"
+    },
+    {
+      "_id": "req_listar_todos",
+      "name": "Listar todos os personagens",
+      "_type": "request",
+      "parentId": "fld_personagens",
+      "method": "GET",
+      "url": "{{ path }}/characters",
+      "authentication": {
+        "type": "inherit"
+      }
+    },
+    {
+      "_id": "req_buscar_por_id",
+      "name": "Buscar personagem por ID",
+      "_type": "request",
+      "parentId": "fld_personagens",
+      "method": "GET",
+      "url": "{{ path }}/characters?character_id=1",
+      "authentication": {
+        "type": "inherit"
+      }
+    },
+    {
+      "_id": "req_criar_personagem",
+      "name": "Criar novo personagem",
+      "_type": "request",
+      "parentId": "fld_personagens",
+      "method": "POST",
+      "url": "{{ path }}/characters",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"John\",\n  \"skin\": \"Guerreiro\"\n}"
+      },
+      "authentication": {
+        "type": "inherit"
+      }
+    },
+    {
+      "_id": "req_atualizar_personagem",
+      "name": "Atualizar personagem (PUT)",
+      "_type": "request",
+      "parentId": "fld_personagens",
+      "method": "PUT",
+      "url": "{{ path }}/characters/1",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"John Atualizado\",\n  \"skin\": \"Mago\"\n}"
+      },
+      "authentication": {
+        "type": "inherit"
+      }
+    },
+    {
+      "_id": "req_deletar_personagem",
+      "name": "Deletar personagem (DELETE)",
+      "_type": "request",
+      "parentId": "fld_personagens",
+      "method": "DELETE",
+      "url": "{{ path }}/characters/1",
+      "authentication": {
+        "type": "inherit"
+      }
+    }
+  ]
+}

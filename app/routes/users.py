@@ -42,42 +42,17 @@ def create_user():
     return jsonify(user.to_dict()), 201
 
 
-@bp.route("/users/<int:id>", methods=["PUT"])
-@token_required
-def update_user(current_user, id):
-    try:
-        usuario = Usuario.query.get_or_404(id)
-        db.session.delete(usuario)
-        db.session.commit()
-        return jsonify({"message": "Sucessfully to delete usuario"}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 @bp.route("/users/<int:id>", methods=["DELETE"])
 @token_required
 def delete_user(current_user, id):
     try:
         usuario = Usuario.query.get_or_404(id)
-        data = request.get_json() or {}
-
-        if "name" not in data or "email" not in data:
-            return jsonify({"error": "Name and email are required"}), 400
-
-        if Usuario.query.filter_by(name=data["name"]).first():
-            return jsonify({"error": "Name already exists"}), 400
-
-        if Usuario.query.filter_by(email=data["email"]).first():
-            return jsonify({"error": "Email already registered"}), 400
-
-        usuario.name = data["name"]
-        usuario.email = data["email"]
-        db.session.delete()
+        db.session.delete(usuario)
+        db.session.commit()
         return jsonify(usuario.to_dict()), 200
-
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 @bp.route("/users/<int:user_id>/character", methods=["POST"])
