@@ -4,6 +4,7 @@ from config import Config
 
 from app.db import db
 from app.auth import token_required, auth_bp
+from app.routes import bp as routes_bp
 
 migrate = Migrate()
 
@@ -16,11 +17,8 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from app.routes import bp as routes_bp
-    from app.routes.ranking import bp as ranking_bp
     app.register_blueprint(routes_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(ranking_bp)
 
 
     @app.errorhandler(400)

@@ -19,7 +19,7 @@ def login():
     if user.password == password:
         token = jwt.encode({
             'user': username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=200)
         }, current_app.config['SECRET_KEY'], algorithm='HS256')
 
         return jsonify({'token': token}), 200

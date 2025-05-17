@@ -33,6 +33,7 @@ def create_character():
         if Character.query.filter_by(name=data['name']).first():
             return jsonify({'error': 'Name already registered'}), 400
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 500
     
     character = Character(name=data['name'], skin=data['skin'])
@@ -44,10 +45,22 @@ def create_character():
 @token_required
 def update_character(current_character, id):
     try:
+        data = request.get_json() or {}
         character = Character.query.get_or_404(id)
-        db.session.delete(character)
+
+        if 'name' not in data or 'skin' not in data:
+            return jsonify({'error': 'Name and Skin are required'}), 400
+
+        # Optional: validate if name/skin already exists in other characters
+        if Character.query.filter(Character.name == data['name'], Character.id != id).first():
+            return jsonify({'error': 'Name already exists'}), 400
+        if Character.query.filter(Character.skin == data['skin'], Character.id != id).first():
+            return jsonify({'error': 'Skin already registered'}), 400
+
+        character.name = data['name']
+        character.skin = data['skin']
         db.session.commit()
-        return jsonify({'message': 'Sucessfully to delete character'}), 200
+        return jsonify(character.to_dict()), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -58,21 +71,9 @@ def update_character(current_character, id):
 def delete_character(current_character, id):
     try:
         character = Character.query.get_or_404(id)
-        data = request.get_json() or {}
-
-        if 'name' not in data or 'skin' not in data:
-            return jsonify({'error': 'Name and email are required'}), 400
-
-        if Character.query.filter_by(name=data['name']).first():
-            return jsonify({'error': 'Name already exists'}), 400
-
-        if Character.query.filter_by(skin=data['skin']).first():
-            return jsonify({'error': 'Skin already registered'}), 400
-
-        character.name = data['name']
-        character.skin = data['skin']
-        db.session.delete()
-        return jsonify(character.to_dict()), 200
+        db.session.delete(character)
+        db.session.commit()
+        return jsonify({'message': 'Character deleted successfully'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
